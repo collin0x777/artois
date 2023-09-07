@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+src/artois/__init__.py
+src/artois/main.py
+src/artois.egg-info/PKG-INFO
+src/artois.egg-info/SOURCES.txt
+src/artois.egg-info/dependency_links.txt
+src/artois.egg-info/top_level.txt
