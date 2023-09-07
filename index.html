@@ -8,8 +8,23 @@
         <script src="script.js"></script>
     </head>
     <body>
-        <h1>Artois</h1>
+        <!-- <h1>Artois</h1> -->
         <textarea id="text-window" rows="4" cols="50"></textarea>
+        <br>
         <button id="generate-button" type="button">Submit</button>
+        <button id="stop-button" type="button">Stop</button>
+        <button id="clear-button" type="button">Clear</button>
+        <input type="number" min="1" max="8192" value="64" id="generation-count-textbox">
+        <input type="range" min="1" max="26" value="12" class="slider" id="generation-count-slider">
+        <div id="kwargs-div">
+            <label>Text kwargs</label>
+            <br>
+            <input type="text" value="batch_size" class="kwargs-key"><input type="text" value="5" class="kwargs-value">
+            <br>
+            <input type="text" value="uhhh" class="kwargs-key"><input type="text" value="3" class="kwargs-value">
+            <br>
+            <input type="text" value="hmmmm" class="kwargs-key"><input type="text" value="4" class="kwargs-value">
+            <br>
+        </div>
     </body>
 </html>

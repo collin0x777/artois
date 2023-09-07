@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading
 import json
 import inspect
+from time import sleep
+
 
 class ArtoisServer(ABC, BaseHTTPRequestHandler):
 
@@ -38,7 +39,7 @@ class ArtoisServer(ABC, BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             json_obj = json.loads(post_data)
-            
+
             if 'context' not in json_obj:
                 self.send_response(400)
                 self.end_headers()
@@ -54,14 +55,25 @@ class ArtoisServer(ABC, BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(bytes(response, 'utf-8'))
 
+    @classmethod
+    def start(cls, address='localhost', port=1366):
+        server = HTTPServer((address, port), cls)
+        print(f"Server started, access it at http://{address}:{port}/")
+        server.serve_forever()
 
-class ArtoisImpl(ArtoisServer):
 
-    def generate(self, context, max_tokens=20, min_tokens=10):
-        print(f"Max tokens: {max_tokens}, min tokens: {min_tokens}")
-        return context + ", Hello World!"
+class ArtoisServerExample(ArtoisServer):
+    def generate(self, context, batch_size=1):
+        sleep(0.3)
+        for i in range(batch_size):
+            if len(context) == 0:
+                next_char = 'a'
+            else:
+                next_char = chr(ord(context[-1]) + 1)
+
+            context = context + next_char
+
+        return context
 
 
-server = HTTPServer(('localhost', 1366), ArtoisImpl)
-print("Server started, access it at http://localhost:1366/")
-server.serve_forever()
+ArtoisServerExample.start()
