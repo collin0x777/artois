@@ -10,11 +10,6 @@ class ArtoisServer(ABC, BaseHTTPRequestHandler):
 
     @abstractmethod
     def generate(self, context):
-        """
-        Generate should return a dictionary with the following fields:
-        - tokens (required): a list of strings, where tokens[i] is the ith token in the generated text
-        - attention: a list of lists of floats, where attention[i][j] is the attention from token i to token j
-        """
         pass
 
     def parse_generate_kwargs(self, json_obj):
@@ -55,8 +50,23 @@ class ArtoisServer(ABC, BaseHTTPRequestHandler):
                 return
 
             kwargs = self.parse_generate_kwargs(json_obj)
+            print(kwargs)
             generated = self.generate(**kwargs)
-            response = json.dumps(generated)
+
+            #delete this
+            tokens = []
+
+            for i in range(len(generated)//3):
+                tokens.append({'text': generated[i * 3:i * 3 + 3]})
+
+            mock_attention = np.tril(np.random.rand(len(tokens), len(tokens)))
+            mock_attention = mock_attention / np.sum(mock_attention, axis=1, keepdims=True)
+            mock_attention = mock_attention.tolist()
+
+            response = json.dumps({'tokens': tokens, 'attention': mock_attention})
+            #delete this
+
+            # response = json.dumps({'context': generated})
 
             self.send_response(200)
             self.end_headers()
@@ -67,6 +77,7 @@ class ArtoisServer(ABC, BaseHTTPRequestHandler):
         server = HTTPServer((address, port), cls)
         print(f"Server started, access it at http://{address}:{port}/")
         server.serve_forever()
+
 
 class ArtoisServerExample(ArtoisServer):
     def generate(self, context, batch_size=1):
@@ -81,5 +92,6 @@ class ArtoisServerExample(ArtoisServer):
             context = context + next_char
 
         return context
+
 
 ArtoisServerExample.start()
